@@ -12,6 +12,7 @@
     let retryCount = 0;
     const MAX_RETRIES = 3;
     const RETRY_DELAY = 2000;
+    const LOAD_TIMEOUT = 10000; // 10 second timeout for initial load
     
     const elements = {
         loader: document.getElementById('loader'),
@@ -19,7 +20,6 @@
         errorText: document.getElementById('error-text'),
         reportContainer: document.getElementById('reportContainer'),
         connectionStatus: document.getElementById('connection-status'),
-        lastUpdated: document.getElementById('last-updated'),
         tokenExpiry: document.getElementById('token-expiry'),
         refreshBtn: document.getElementById('refresh-btn'),
         fullscreenBtn: document.getElementById('fullscreen-btn'),
@@ -38,6 +38,8 @@
 
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/powerbi-client@2.22.4/dist/powerbi.min.js';
+            script.async = true;
+            script.defer = true;
             script.onload = () => {
                 console.log('Power BI SDK loaded successfully');
                 resolve();
@@ -127,7 +129,6 @@
                 console.log('Report loaded successfully');
                 hideLoader();
                 updateStatus('connected', 'Connected');
-                updateLastUpdated();
                 retryCount = 0;
             });
             
@@ -218,7 +219,6 @@
                 await report.setAccessToken(tokenData.token);
                 console.log('Token refreshed successfully');
                 setupTokenRefresh(tokenData.expiry);
-                updateLastUpdated();
             }
         } catch (error) {
             console.error('Token refresh failed:', error);
@@ -301,10 +301,6 @@
         elements.connectionStatus.textContent = `● ${text}`;
     }
     
-    function updateLastUpdated() {
-        const now = new Date();
-        elements.lastUpdated.textContent = `Last Updated: ${now.toLocaleTimeString()}`;
-    }
     
     function updateTokenExpiry() {
         if (tokenExpiryTime) {

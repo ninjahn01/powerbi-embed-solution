@@ -7,6 +7,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const winston = require('winston');
 const path = require('path');
@@ -43,6 +44,17 @@ try {
   process.exit(1);
 }
 
+// Enable compression for all responses
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  },
+  level: 6 // Balanced compression level
+}));
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -62,7 +74,13 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(express.static('public'));
+
+// Serve static files with caching
+app.use(express.static('public', {
+  maxAge: process.env.NODE_ENV === 'production' ? '1d' : '0',
+  etag: true,
+  lastModified: true
+}));
 
 app.use((req, res, next) => {
   req.correlationId = uuidv4();
