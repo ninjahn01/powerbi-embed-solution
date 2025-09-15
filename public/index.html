@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power BI Embedded Report</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Power BI SDK will be loaded dynamically -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Power BI Embedded Report</h1>
+            <div class="status-bar">
+                <span id="connection-status" class="status disconnected">● Disconnected</span>
+                <button id="refresh-btn" class="btn btn-primary">Refresh Report</button>
+                <button id="fullscreen-btn" class="btn btn-secondary">Full Screen</button>
+            </div>
+        </header>
+        
+        <main>
+            <div id="loader" class="loader">
+                <div class="spinner"></div>
+                <p>Loading Power BI Report...</p>
+            </div>
+            
+            <div id="error-container" class="error-container" style="display: none;">
+                <div class="error-message">
+                    <h3>⚠️ Error Loading Report</h3>
+                    <p id="error-text"></p>
+                    <button id="retry-btn" class="btn btn-primary">Retry</button>
+                </div>
+            </div>
+            
+            <div id="reportContainer" class="report-container"></div>
+        </main>
+        
+        <footer>
+            <div class="info-bar">
+                <span id="last-updated">Last Updated: Never</span>
+                <span id="token-expiry">Token Expires: --:--</span>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
