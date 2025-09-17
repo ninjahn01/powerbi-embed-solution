@@ -12,29 +12,17 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18.x'
+        node-version: '20.x'
 
     - name: npm install and build
       run: |
         npm ci
         npm run build --if-present
 
-    - name: Create Azure Credentials JSON
-      id: create-json
-      run: |
-        CLIENT_ID=$(echo "${{ secrets.AZURE_CLIENT_ID }}" | xargs)
-        CLIENT_SECRET=$(echo "${{ secrets.AZURE_CLIENT_SECRET }}" | xargs)
-        SUBSCRIPTION_ID=$(echo "${{ secrets.AZURE_SUBSCRIPTION_ID }}" | xargs)
-        TENANT_ID=$(echo "${{ secrets.AZURE_TENANT_ID }}" | xargs)
-
-        echo "AZURE_CREDENTIALS<<EOF" >> $GITHUB_OUTPUT
-        echo "{\"clientId\":\"$CLIENT_ID\",\"clientSecret\":\"$CLIENT_SECRET\",\"subscriptionId\":\"$SUBSCRIPTION_ID\",\"tenantId\":\"$TENANT_ID\"}" >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
-
     - name: Login to Azure
       uses: azure/login@v1
       with:
-        creds: ${{ steps.create-json.outputs.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
