@@ -107,12 +107,29 @@
                 id: config.reportId,
                 permissions: models.Permissions.Read,
                 settings: {
-                    filterPaneEnabled: true,
-                    navContentPaneEnabled: true,
+                    filterPaneEnabled: false,
+                    navContentPaneEnabled: false,
+                    panes: {
+                        filters: {
+                            expanded: false,
+                            visible: false
+                        },
+                        pageNavigation: {
+                            visible: false
+                        }
+                    },
                     background: models.BackgroundType.Transparent,
                     layoutType: models.LayoutType.Custom,
                     customLayout: {
                         displayOption: models.DisplayOption.FitToWidth
+                    },
+                    bars: {
+                        statusBar: {
+                            visible: false
+                        },
+                        actionBar: {
+                            visible: false
+                        }
                     }
                 }
             };
@@ -261,12 +278,17 @@
     }
     
     /**
-     * Toggle fullscreen mode
+     * Toggle fullscreen mode - TRUE browser fullscreen (hides all browser UI)
      */
     function toggleFullscreen() {
         if (!document.fullscreenElement) {
-            elements.reportContainer.requestFullscreen().catch(err => {
+            // Request fullscreen on the entire document body for maximum space
+            document.documentElement.requestFullscreen().catch(err => {
                 console.error('Error attempting fullscreen:', err);
+                // Fallback to container fullscreen if document fullscreen fails
+                elements.reportContainer.requestFullscreen().catch(fallbackErr => {
+                    console.error('Fallback fullscreen also failed:', fallbackErr);
+                });
             });
         } else {
             document.exitFullscreen();
