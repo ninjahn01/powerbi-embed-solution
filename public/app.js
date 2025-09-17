@@ -20,7 +20,6 @@
         errorText: document.getElementById('error-text'),
         reportContainer: document.getElementById('reportContainer'),
         connectionStatus: document.getElementById('connection-status'),
-        tokenExpiry: document.getElementById('token-expiry'),
         refreshBtn: document.getElementById('refresh-btn'),
         fullscreenBtn: document.getElementById('fullscreen-btn'),
         retryBtn: document.getElementById('retry-btn')
@@ -158,7 +157,7 @@
             report.on('error', (event) => {
                 handleEmbedError(event.detail);
             });
-            
+
             setupTokenRefresh(tokenData.expiry);
             
         } catch (error) {
@@ -206,7 +205,6 @@
         }
         
         tokenExpiryTime = new Date(expiryTime);
-        updateTokenExpiry();
         
         const now = new Date();
         const refreshTime = new Date(tokenExpiryTime.getTime() - 5 * 60 * 1000);
@@ -323,27 +321,7 @@
         elements.connectionStatus.textContent = `● ${text}`;
     }
     
-    
-    function updateTokenExpiry() {
-        if (tokenExpiryTime) {
-            const expiryStr = tokenExpiryTime.toLocaleTimeString();
-            elements.tokenExpiry.textContent = `Token Expires: ${expiryStr}`;
-        }
-    }
-    
-    setInterval(() => {
-        if (tokenExpiryTime) {
-            const now = new Date();
-            const remaining = tokenExpiryTime - now;
-            if (remaining > 0) {
-                const minutes = Math.floor(remaining / 60000);
-                const seconds = Math.floor((remaining % 60000) / 1000);
-                elements.tokenExpiry.textContent = `Token Expires: ${minutes}:${seconds.toString().padStart(2, '0')}`;
-            } else {
-                elements.tokenExpiry.textContent = 'Token Expired';
-            }
-        }
-    }, 1000);
+
     
     document.addEventListener('DOMContentLoaded', init);
 })();
